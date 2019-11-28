@@ -10,18 +10,16 @@ const nums = [
 const operations = ["+", "-", "*", "/"];
 
 const makeButtonFrom = (thing, onClickHandler) => (
-	<button 
+	<button
 		className="calculator-button"
 		onClick={() => onClickHandler(thing)}>
 		{thing}
 	</button>
 );
 
-const CalculatorDisplay = (props) => {
-	return <div>{props.result}</div>
-}
+const CalculatorDisplay = (props) => <div>{props.result}</div>;
 
-const NumberPad = (props) => {	
+const NumberPad = (props) => {
 	const numberButtons = nums.map(row => row.map(number => makeButtonFrom(number, props.clickHandler)));
 	return (
 		<div>
@@ -30,13 +28,11 @@ const NumberPad = (props) => {
 	);
 }
 
-const OperatorButtons = (props) => {
-	return (
-		<div>
-			{operations.map(op => makeButtonFrom(op, props.clickHandler))}
-		</div>
-	);
-}
+const OperatorButtons = (props) => (
+	<div>
+		{operations.map(op => makeButtonFrom(op, props.clickHandler))}
+	</div>
+);
 
 export default class Calculator extends React.Component {
 	constructor(props) {
@@ -57,31 +53,31 @@ export default class Calculator extends React.Component {
 		const resultToDisplay = this.state.operation ? this.state.rightOperand : this.state.leftOperand;
 		return (
 			<div>
-				<CalculatorDisplay result={resultToDisplay}/>
+				<CalculatorDisplay result={resultToDisplay} />
 				<div>
 					{makeButtonFrom("=", this.calculate)}
 					{makeButtonFrom("CLEAR", this.clear)}
 				</div>
-				<NumberPad clickHandler={this.chooseNumber}/>
-				<OperatorButtons clickHandler={this.chooseOperator}/>
+				<NumberPad clickHandler={this.chooseNumber} />
+				<OperatorButtons clickHandler={this.chooseOperator} />
 			</div>
 		);
 	}
 
-	chooseNumber(number){
-		if(!Number.isInteger(number)){
+	chooseNumber(number) {
+		if (!Number.isInteger(number)) {
 			throw new Error("not a number.");
 		}
 
 		if (this.state.operation === undefined) {
-			this.setState({ leftOperand: Number(''+ this.state.leftOperand + number) });
+			this.setState({ leftOperand: Number('' + this.state.leftOperand + number) });
 		} else {
 			this.setState({ rightOperand: Number('' + this.state.rightOperand + number) });
 		}
 	}
 
 	chooseOperator(operator) {
-		if(!operations.includes(operator)){
+		if (!operations.includes(operator)) {
 			throw new Error("not a valid operator.");
 		}
 
@@ -101,7 +97,7 @@ export default class Calculator extends React.Component {
 		const rightOperand = this.state.rightOperand;
 		let result;
 		switch (this.state.operation) {
-			case undefined: 
+			case undefined:
 				return;
 			case "+":
 				result = leftOperand + rightOperand;
