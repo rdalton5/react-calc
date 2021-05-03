@@ -1,38 +1,10 @@
 import React from "react";
 import "./Calculator.css";
-
-const nums = [
-	[1, 2, 3],
-	[4, 5, 6],
-	[7, 8, 9],
-	[0]
-];
-const operations = ["+", "-", "*", "/"];
-
-const makeButtonFrom = (thing, onClickHandler) => (
-	<button
-		className="calculator-button"
-		onClick={() => onClickHandler(thing)}>
-		{thing}
-	</button>
-);
-
-const CalculatorDisplay = (props) => <div>{props.result}</div>;
-
-const NumberPad = (props) => {
-	const numberButtons = nums.map(row => row.map(number => makeButtonFrom(number, props.clickHandler)));
-	return (
-		<div>
-			{numberButtons.map(row => (<div>{row}</div>))}
-		</div>
-	);
-}
-
-const OperatorButtons = (props) => (
-	<div>
-		{operations.map(op => makeButtonFrom(op, props.clickHandler))}
-	</div>
-);
+import { makeButtonFrom } from './Util';
+import { operations } from './constants';
+import NumberPad from './NumberPad';
+import OperatorButtons from './OperatorButtons';
+import Display from './Display';
 
 export default class Calculator extends React.Component {
 	constructor(props) {
@@ -54,7 +26,7 @@ export default class Calculator extends React.Component {
 		const resultToDisplay = this.state.operation ? this.state.rightOperand : this.state.leftOperand;
 		return (
 			<div>
-				<CalculatorDisplay result={resultToDisplay} />
+				<Display result={resultToDisplay} />
 				<div>
 					{makeButtonFrom("=", this.calculate)}
 					{makeButtonFrom("CLEAR", this.clear)}
@@ -79,7 +51,7 @@ export default class Calculator extends React.Component {
 	}
 
 	chooseOperator(operator) {
-		if (!operations.includes(operator)) {
+		if (!operations[operator] === undefined) {
 			throw new Error("not a valid operator.");
 		}
 
@@ -95,16 +67,16 @@ export default class Calculator extends React.Component {
 	}
 
 	backspace() {
-		if(this.state.operation === undefined) {
-			this.setState({leftOperand: removeLastDigitEntered(this.state.leftOperand)});
+		if (this.state.operation === undefined) {
+			this.setState({ leftOperand: removeLastDigitEntered(this.state.leftOperand) });
 		} else {
-			this.setState({rightOperand: removeLastDigitEntered(this.state.leftOperand)});
+			this.setState({ rightOperand: removeLastDigitEntered(this.state.leftOperand) });
 		}
 
-		function removeLastDigitEntered(number){
+		function removeLastDigitEntered(number) {
 			const stringifiedNumber = String(number);
 			const shorterNumber = stringifiedNumber.substring(0, stringifiedNumber.length - 1);
-			if(shorterNumber.length === 0){
+			if (shorterNumber.length === 0) {
 				return 0;
 			} else {
 				return Number(shorterNumber);
@@ -119,16 +91,16 @@ export default class Calculator extends React.Component {
 		switch (this.state.operation) {
 			case undefined:
 				return;
-			case "+":
+			case operations.add:
 				result = leftOperand + rightOperand;
 				break;
-			case "-":
+			case operations.subtract:
 				result = leftOperand - rightOperand;
 				break;
-			case "*":
+			case operations.multiply:
 				result = leftOperand * rightOperand;
 				break;
-			case "/":
+			case operations.divide:
 				result = leftOperand / rightOperand;
 				break;
 			default:
